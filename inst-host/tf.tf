@@ -1,9 +1,13 @@
 ######### add key-pair file #############
 
 resource "aws_key_pair" "awskey" {
-  key_name = "awskey"
-  public_key = file("awskey.pub")
+  key_name = "/Users/yashwant/terraform/inst-host/awskey"
+  public_key = file("/Users/yashwant/terraform/inst-host/awskey.pub")
 }
+
+######### fetch the available zones in the region ###########
+
+data "aws_availability_zones" "available" {}
 
 ########update instance info#########
 
@@ -11,6 +15,7 @@ resource "aws_instance" "tf" {
   ami = "ami-06b72b3b2a773be2b"
   instance_type = var.inst_type
   security_groups = var.sg_inst
+  availability_zone = data.aws_availability_zones.available.names[1]  ####### specifieng the availability zone to use
   key_name = aws_key_pair.awskey.key_name
   connection { ####### add connection to instance
     type = "ssh"
