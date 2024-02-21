@@ -8,10 +8,14 @@ resource "aws_s3_bucket" "web-1234" {
   }
 }
 
+############# make a policy document ################
+
 resource "aws_s3_bucket_policy" "name" {
   bucket = aws_s3_bucket.web-1234.id
   policy = data.aws_iam_policy_document.website_policy.json
 }
+
+########## feed policy details in the document ##############
 
 data "aws_iam_policy_document" "website_policy" {
   statement {
@@ -40,25 +44,6 @@ resource "aws_s3_bucket_website_configuration" "website" {
   }
 }
 
-# #####update bucket policy for get object###########
-
-# resource "aws_s3_bucket_policy" "web-1234" {
-#   bucket = aws_s3_bucket.web-1234.id
-
-#   policy = jsonencode({
-#     Version = "2012-10-17",
-#     Statement = [
-#       {
-#         Sid       = "PublicReadGetObject",
-#         Effect    = "Allow",
-#         Principal = "*",
-#         Action    = "s3:GetObject",
-#         Resource  = "${aws_s3_bucket.web-1234.arn}/*"
-#       }
-#     ]
-#   })
-# }
-
 ###### add policy for public access #######
 
 resource "aws_s3_bucket_public_access_block" "public_access_block" {
@@ -79,6 +64,8 @@ resource "aws_s3_bucket_public_access_block" "public_access_block" {
 #   #etag         = filemd5("/Users/yashwant/Downloads/build_3/${each.key}")
 #   #content_type  = "text/html"
 # }
+
+######### using module to upload folder for every content type ################
 
 module "test_aws_s3_folder_1" {
   source = "github.com/chandan-singh/terraform-aws-s3-object-folder.git"
